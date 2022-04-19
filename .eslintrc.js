@@ -12,6 +12,6 @@ module.exports = {
   plugins: ['vue', '@typescript-eslint'],
   rules: {
     'vue/no-multiple-template-root': 'off',
-    quotes: ['error', 'double'], //引号规则为：“双引号”，否则一律按照 “error” 处理（你也可以改成warn试一下）
+    quotes: ['error', 'single'], //引号规则为：“双引号”，否则一律按照 “error” 处理（你也可以改成warn试一下）
   },
 };
