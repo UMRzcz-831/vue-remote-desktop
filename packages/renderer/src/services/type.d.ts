@@ -27,3 +27,25 @@ export type LoginParams = {
 export type LoginRes = {
   token: string;
 };
+
+export type DeviceDetailParams = {
+  deviceId: number;
+};
+
+export type DeviceDetailRes = {
+  id: number;
+  hostname: string;
+  alias: string | null;
+  osPlatform: string;
+  osVersion: string;
+  osAdmin: string;
+  ip: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DeviceListRes = {
+  userId: number;
+  deviceId: number;
+  device: Pick<DeviceDetailRes, 'alias' | 'hostname'>;
+}[];
