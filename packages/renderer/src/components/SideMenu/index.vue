@@ -1,6 +1,11 @@
 <template>
   <div class="side-menu">
-    <n-menu :options="menuOptions" :indent="16" />
+    <NMenu
+      :options="menuOptions"
+      :indent="16"
+      default-value="home"
+      @update:value="handleUpdateValue"
+    />
   </div>
 </template>
 
@@ -8,6 +13,9 @@
 import { h, Component } from 'vue';
 import { MenuOption, NMenu, NIcon } from 'naive-ui';
 import { FishOutline as FishIcon } from '@vicons/ionicons5';
+import {useRouter} from 'vue-router';
+
+const router = useRouter()
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) });
@@ -16,23 +24,27 @@ function renderIcon(icon: Component) {
 const menuOptions: MenuOption[] = [
   {
     label: '远程协助',
-    key: 'remote',
+    key: 'home',
     icon: renderIcon(FishIcon),
   },
   {
     label: '设备类别',
-    key: 'devices',
+    key: 'home',
     icon: renderIcon(FishIcon),
   },
 ];
+
+const handleUpdateValue = (key: string, item: MenuOption) => {
+ router.push('/' +  key)
+};
 </script>
 
 <style lang="scss" scoped>
 .side-menu {
   width: 150px;
   :deep(.n-menu .n-menu-item::before) {
-    left: 0;
-    right: 16px;
+    left: 0 !important;
+    right: 16px !important;
   }
 }
 </style>
