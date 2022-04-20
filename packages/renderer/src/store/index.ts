@@ -10,7 +10,7 @@ export const useUserStore = defineStore('user', () => {
   /**
    * token hook
    */
-  const token = useStorageAsync('token', '');
+  const token = useStorageAsync('token', localStorage.getItem('token') || '');
 
   // token监听
   const tokenWatch = watch(token, (newV) => {

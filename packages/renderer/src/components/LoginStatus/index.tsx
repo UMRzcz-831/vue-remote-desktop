@@ -1,16 +1,24 @@
-import { defineComponent, onMounted, watch } from 'vue';
+import { defineComponent, onMounted } from 'vue';
 import { NPopconfirm } from 'naive-ui';
 import { useRouter } from 'vue-router';
 import './index.scss';
 import { useUserStore } from '../../store';
 import { storeToRefs } from 'pinia';
+import { isEmpty } from 'lodash';
 
 const LoginStatus = defineComponent({
   setup() {
     const router = useRouter();
     const userSetup = useUserStore();
-    const { setPreference, setToken } = userSetup;
+    const { setPreference, setToken, reqUserInfo } = userSetup;
     const { preference } = storeToRefs(userSetup);
+
+    onMounted(() => {
+      console.log(preference.value, 'mounted');
+      if (isEmpty(preference.value)) {
+        reqUserInfo();
+      }
+    });
 
     const handleLogout = () => {
       setToken('');
