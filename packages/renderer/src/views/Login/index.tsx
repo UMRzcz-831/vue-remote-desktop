@@ -1,5 +1,5 @@
 import { defineComponent, onMounted, ref } from 'vue';
-import { useStorageAsync } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 import {
   NTabs,
@@ -18,11 +18,16 @@ import {
 import './index.scss';
 import { LoginParams } from '../../services/type';
 import { login } from '../../services';
+import { useUserStore } from '../../store';
 const Login = defineComponent({
   setup() {
     onMounted(() => {
-        auth && router.push('/');
+      auth && router.push('/');
     });
+
+    const userSetup = useUserStore();
+    const { setToken } = userSetup;
+    const { token: auth } = storeToRefs(userSetup);
 
     const msger = useMessage();
     const router = useRouter();
@@ -43,7 +48,6 @@ const Login = defineComponent({
       ],
     });
     const signin = ref<FormInst | null>();
-    const auth = useStorageAsync('token', '');
 
     const reqLogin = async (params: LoginParams) => {
       try {
@@ -52,7 +56,7 @@ const Login = defineComponent({
         if (success) {
           const { token } = data;
           msger.success('登录成功');
-          auth.value = token;
+          setToken(token);
           router.push('/home');
         } else {
           msger.error(msg);

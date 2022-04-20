@@ -1,29 +1,21 @@
-import { defineComponent, onMounted, ref } from 'vue';
-import { useMessage } from 'naive-ui';
-import { useStorageAsync } from '@vueuse/core';
+import { defineComponent, onMounted, watch } from 'vue';
+import { NPopconfirm } from 'naive-ui';
+import { useRouter } from 'vue-router';
 import './index.scss';
-import { getUserPreference } from '../../services';
-import { PreferenceRes } from '../../services/type';
+import { useUserStore } from '../../store';
+import { storeToRefs } from 'pinia';
 
 const LoginStatus = defineComponent({
   setup() {
-    const msger = useMessage();
-    const preference = ref<Partial<PreferenceRes>>({});
-    const token = useStorageAsync('token', '');
-    onMounted(() => {
-      token && reqUserInfo();
-    });
+    const router = useRouter();
+    const userSetup = useUserStore();
+    const { setPreference, setToken } = userSetup;
+    const { preference } = storeToRefs(userSetup);
 
-    const reqUserInfo = async () => {
-      try {
-        const { data, success, msg } = await getUserPreference();
-        if (success) {
-          preference.value = data;
-          console.log(preference.value);
-        }
-      } catch (error) {
-        msger.error(error as string);
-      }
+    const handleLogout = () => {
+      setToken('');
+      setPreference({});
+      router.push('/login');
     };
 
     return () => (
@@ -43,6 +35,26 @@ const LoginStatus = defineComponent({
               <span class="login-status-nickname">
                 {preference.value.nickname || '尚未登录'}
               </span>
+            </div>
+            <div class="login-status-logout">
+              <NPopconfirm
+                placement="right-start"
+                onPositiveClick={handleLogout}
+                positiveText="确定"
+                negativeText="取消"
+                v-slots={{
+                  trigger: () => (
+                    <span
+                      v-show={Boolean(preference.value.nickname)}
+                      class="login-status-logout-text"
+                    >
+                      退出登录
+                    </span>
+                  ),
+                }}
+              >
+                是否确认退出
+              </NPopconfirm>
             </div>
           </div>
         </div>

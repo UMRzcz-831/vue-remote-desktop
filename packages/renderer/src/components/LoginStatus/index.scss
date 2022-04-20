@@ -1,9 +1,13 @@
 .login-status-wrapper {
-  margin: 40px auto;
+  margin: 30px auto;
   display: flex;
   justify-content: center;
   align-items: center;
   .login-status-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     .login-status-avatar {
       width: 70px;
       height: 70px;
@@ -26,9 +30,12 @@
         font-weight: bold;
         margin-bottom: 5px;
       }
-      .login-status-email {
+      .login-status-logout {
         font-size: 14px;
         color: #999;
+        &-text {
+          cursor: pointer;
+        }
       }
     }
   }
