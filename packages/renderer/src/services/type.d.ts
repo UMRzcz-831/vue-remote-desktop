@@ -16,3 +16,14 @@ export type PreferenceRes = {
   avatarUrl: string | null;
   theme: string;
 };
+
+export type LoginParams = {
+  username?: string;
+  password: string;
+  mobile?: string;
+  type: 0 | 1; // 0: 用户名密码登录 1: 手机号登录
+};
+
+export type LoginRes = {
+  token: string;
+};

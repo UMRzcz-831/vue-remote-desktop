@@ -1,6 +1,6 @@
 import request from '../utils/request';
 import { CommonResponse } from '../types/common';
-import { PreferenceRes } from './type';
+import { PreferenceRes, LoginRes, LoginParams } from './type';
 const urls = {
   getUserPreference: '/preference/query',
   login: '/user/login',
@@ -13,5 +13,15 @@ export const getUserPreference = async (): Promise<
 > => {
   return request(urls.getUserPreference, {
     method: 'GET',
+  });
+};
+
+// login
+export const login = async (
+  data: LoginParams
+): Promise<CommonResponse<LoginRes>> => {
+  return request(urls.login, {
+    method: 'POST',
+    data,
   });
 };

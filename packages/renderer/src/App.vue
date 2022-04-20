@@ -16,19 +16,18 @@ import {
 } from 'naive-ui';
 
 const themeOverrides: GlobalThemeOverrides = {
-//   common: {
-//     primaryColor: '#2c3e50',
-//   },
-     Layout: {
-	   color: '#222',
-	   headerColor:'#222',
-	   siderColor: '#222'
-	   
-	 },
-	 
-
+  //   common: {
+  //     primaryColor: '#2c3e50',
+  //   },
+  Layout: {
+    color: '#222',
+    headerColor: '#222',
+    siderColor: '#222',
+  },
+  Card: {
+    color: '#222',
+  },
 };
-</script>
-<style>
 
-</style>
+</script>
+<style></style>
