@@ -45,19 +45,16 @@ instance.interceptors.request.use(({ headers, ...restConfig }) => {
 });
 
 instance.interceptors.response.use(
-  (response: AxiosResponse) => {
+  async (response: AxiosResponse) => {
     const { setToken } = useUserStore();
-
 
     const { data = {} } = response;
     const { msg: errMsg = '服务器开小差了', code } = data;
     if (code !== 401) {
       return Promise.resolve(data);
     }
+    await router.push({ name: 'login' });
     setToken(null);
-    router.push({ name: 'login' }).then(() => {
-      console.log('router', router.currentRoute);
-    });
 
     return Promise.reject(errMsg);
   },

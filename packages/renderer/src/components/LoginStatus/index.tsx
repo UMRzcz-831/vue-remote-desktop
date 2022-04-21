@@ -44,7 +44,12 @@ const LoginStatus = defineComponent({
                 {preference.value.nickname || '尚未登录'}
               </span>
             </div>
-            <div class="login-status-logout">
+            <div
+              class="login-status-logout"
+              style={{
+                visibility: isEmpty(preference.value) ? 'hidden' : 'visible',
+              }}
+            >
               <NPopconfirm
                 placement="right-start"
                 onPositiveClick={handleLogout}
@@ -52,12 +57,7 @@ const LoginStatus = defineComponent({
                 negativeText="取消"
                 v-slots={{
                   trigger: () => (
-                    <span
-                      v-show={Boolean(preference.value.nickname)}
-                      class="login-status-logout-text"
-                    >
-                      退出登录
-                    </span>
+                    <span class="login-status-logout-text">退出登录</span>
                   ),
                 }}
               >

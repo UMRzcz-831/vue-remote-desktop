@@ -22,7 +22,6 @@ import { useUserStore } from '../../store';
 const Login = defineComponent({
   setup() {
     onMounted(() => {
-      auth && router.push('/');
     });
 
     const userSetup = useUserStore();

@@ -24,7 +24,8 @@ export const useDeviceStore = defineStore('device', () => {
         msger.error(msg);
       }
     } catch (error) {
-      throw error;
+      msger.error(error as string);
+      // throw error;
     }
   };
 
