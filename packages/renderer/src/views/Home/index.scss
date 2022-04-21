@@ -1,0 +1,47 @@
+.home-wrapper {
+  height: calc(100% - 40px);
+  padding: 20px 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  color: #ddd;
+  .local-info {
+    flex: 1;
+    height: 400px;
+    border: 1px solid azure;
+    .local-info-content {
+      padding: 0 10px;
+      .n-form-item-label {
+        font-size: 14px;
+        color: #999;
+      }
+      .local-info-local-id {
+        font-size: 28px;
+        font-weight: 600;
+      }
+      .local-info-local-code {
+        font-size: 20px;
+        font-weight: 500;
+      }
+    }
+  }
+  .remote-info {
+    flex: 1;
+    height: 400px;
+    border: 1px solid skyblue;
+    .remote-info-content {
+      padding: 0 10px;
+
+      .n-form-item-label {
+        font-size: 14px;
+        color: #999;
+      }
+      .remote-info-local-id {
+        width: 300px;
+      }
+      .remote-info-local-code {
+      }
+    }
+  }
+}
