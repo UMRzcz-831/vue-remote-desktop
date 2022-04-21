@@ -71,7 +71,7 @@ const Devices = defineComponent({
                   {detailList.map(({ label, key, editable }) => (
                       <NFormItem label={label}>
                         <div class="device-detail-item-view">
-                          {detail.value[key as keyof typeof detail.value]}
+                          {detail.value[key as keyof typeof detail.value] || 'N/A'}
                         </div>
                       </NFormItem>
                   ))}

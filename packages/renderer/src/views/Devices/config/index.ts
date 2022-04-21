@@ -30,12 +30,12 @@ export const detailList = [
     editable: false,
   },
   {
-    key: 'updated_at',
+    key: 'lastConnectedAt',
     label: '最后登录时间',
     editable: false,
   },
   {
-    key: 'created_at',
+    key: 'bindAt',
     label: '绑定时间',
     editable: false,
   },
