@@ -1,20 +1,45 @@
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import {
-  NDivider,
-
-  NForm,
-  NFormItem,
-  NInput,
-} from 'naive-ui';
+import { NButton, NDivider, NForm, NFormItem, NInput } from 'naive-ui';
 import './index.scss';
 import { isEmpty } from 'lodash';
+import { ipcRenderer } from 'electron';
+import '../../utils/peer-puppet'
 
 const Home = defineComponent({
   setup() {
     onMounted(() => {
-      // gethome();
+      registLocal();
+      ipcRenderer.on('control-state-change', handleControlState);
     });
+
+    onUnmounted(() => {
+      ipcRenderer.removeListener('control-state-change', handleControlState);
+    });
+
+    const remoteCode = ref('');
+    const localCode = ref('');
+    const controlText = ref('未连接');
+
+    const registLocal = async () => {
+      const code = await ipcRenderer.invoke('registLocal');
+      console.log('code', code);
+      localCode.value = code;
+    };
+
+    const handleStartControl = () => {
+      ipcRenderer.send('control', remoteCode.value);
+    };
+
+    const handleControlState = (event: any, name: string, type: number) => {
+      let text = '';
+      if (type === 1) {
+        text = `远程控制${name}成功`;
+      } else if (type === 2) {
+        text = `被${name}远程控制中`;
+      }
+      controlText.value = text;
+    };
 
     return () => (
       <div class="home-wrapper">
@@ -25,16 +50,18 @@ const Home = defineComponent({
           <div class="local-info-content">
             <NForm label-width="auto" size="large">
               <NFormItem label="本机识别码">
-                <div class="local-info-local-id">
+                <div class="local-info-local-code">
                   <span>
-                    {'478418376'.replace(/\s/g, '').replace(/(.{3})/g, '$1 ')}
+                    {localCode.value
+                      .replace(/\s/g, '')
+                      .replace(/(.{3})/g, '$1 ')}
                   </span>
                 </div>
               </NFormItem>
             </NForm>
             <NForm label-width="auto" size="large" show-feedback={false}>
               <NFormItem label="本机验证码">
-                <div class="local-info-local-code">
+                <div class="local-info-local-verify">
                   <span>2aJBn0</span>
                 </div>
               </NFormItem>
@@ -49,10 +76,15 @@ const Home = defineComponent({
             <NForm label-width="auto" size="large">
               <NFormItem label="远程主机识别码">
                 <div class="remote-info-local-id">
-                  <NInput placeholder="输入识别码"></NInput>
+                  <NInput
+                    placeholder="输入识别码"
+                    v-model:value={remoteCode.value}
+                  ></NInput>
                 </div>
               </NFormItem>
             </NForm>
+            <div>{controlText.value}</div>
+            <NButton onClick={handleStartControl}>连接</NButton>
           </div>
         </div>
       </div>

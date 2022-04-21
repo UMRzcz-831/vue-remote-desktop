@@ -1,3 +1,4 @@
+// eslint disable 
 import { defineComponent, onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import {
@@ -45,7 +46,7 @@ const Devices = defineComponent({
               <NList>
                 {list.value.map(({ device, deviceId }) => (
                   <NListItem
-                    onClick={() => handleSelectDevice(deviceId)}
+                  {...{onClick: () => handleSelectDevice(deviceId)} as any}
                     key={deviceId}
                     v-slots={{
                       prefix: () => (
