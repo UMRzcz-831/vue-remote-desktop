@@ -1,12 +1,13 @@
-import { app, BrowserWindow, shell } from 'electron';
+import electron, { app, BrowserWindow, shell } from 'electron';
 import { release, hostname, platform, version, userInfo } from 'os';
-import { join } from 'path';
-
+import { join, resolve } from 'path';
+import handleIPC from './ipc';
+import Robot from './robot';
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration();
 
 // Set application name for Windows 10+ notifications
-if (process.platform === 'win32') app.setAppUserModelId(app.getName());
+if (process.platform === 'win32') app.setAppUserModelId(app.name);
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
@@ -19,6 +20,8 @@ let win: BrowserWindow | null = null;
 async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
+    width: 1024,
+    height: 576,
     webPreferences: {
       preload: join(__dirname, '../preload/index.cjs'),
       nodeIntegration: true,
@@ -34,12 +37,14 @@ async function createWindow() {
 
     win.loadURL(url);
     win.webContents.openDevTools();
-    console.log(JSON.stringify({
-      hostname: hostname(),
-      platform: platform(),
-      version: version(),
-      osAdmin: userInfo().username,
-    }));
+    // console.log(
+    //   JSON.stringify({
+    //     hostname: hostname(),
+    //     platform: platform(),
+    //     version: version(),
+    //     osAdmin: userInfo().username,
+    //   })
+    // );
   }
 
   // Communicate with the Renderer-process.
@@ -53,19 +58,32 @@ async function createWindow() {
     }
   });
 
-  // Test active push message to Renderer-process
-  win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', new Date().toLocaleString());
-  });
+  // // Test active push message to Renderer-process
+  // win.webContents.on('did-finish-load', () => {
+  //   win?.webContents.send('main-process-message', new Date().toLocaleString());
+  // });
 
-  // Make all links open with the browser, not with the application
-  win.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('https:')) shell.openExternal(url);
-    return { action: 'deny' };
-  });
+  // // Make all links open with the browser, not with the application
+  // win.webContents.setWindowOpenHandler(({ url }) => {
+  //   if (url.startsWith('https:')) shell.openExternal(url);
+  //   return { action: 'deny' };
+  // });
 }
 
-app.whenReady().then(createWindow);
+app.on('ready', async () => {
+  // let uri = resolve(process.cwd(), './devtools-6.1.4/shell-chrome');
+  // try {
+  //   await electron.session.defaultSession.loadExtension(uri, {
+  //     allowFileAccess: true,
+  //   });
+  // } catch (e) {
+  //   console.log('Failed to load chrome devtools');
+  // }
+  Robot()
+  handleIPC();
+  await createWindow();
+});
+// app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
   win = null;
@@ -88,3 +106,7 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+export const send = (channel: string, ...args: any[]) => {
+  win?.webContents.send(channel, ...args);
+};
