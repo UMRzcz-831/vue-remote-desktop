@@ -25,6 +25,11 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: '/control',
+    name: 'control',
+    component: () => import('../views/Control/index.vue'),
+  },
 ];
 
 const router = createRouter({
