@@ -23,9 +23,6 @@ export default defineConfig({
        *   'electron-store': 'const Store = require("electron-store"); export default Store;',
        * }
        */
-      {
-        sqlite3: 'const sqlite3 = require("sqlite3"); export default sqlite3;',
-      }
     ),
   ],
   resolve: {

@@ -12,18 +12,24 @@
     "test:e2e": "npx playwright test",
     "test:e2e:headless": "npx playwright test --headed"
   },
+  "build": {
+    "appId": "remoteDesktop",
+    "productName": "remoteDesktop",
+    "copyright": "Copyright © year ${author}",
+    "extends": null
+  },
   "engines": {
     "node": ">=14.17.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.19.2",
-    "@types/sqlite3": "^3.1.8",
     "@typescript-eslint/eslint-plugin": "^5.16.0",
     "@typescript-eslint/parser": "^5.16.0",
     "@vicons/ionicons5": "^0.12.0",
     "@vitejs/plugin-vue": "^2.1.0",
     "electron": "16.0.8",
     "electron-builder": "^22.14.5",
+    "electron-rebuild": "^3.2.7",
     "eslint": "^8.12.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -54,12 +60,15 @@
   "dependencies": {
     "@types/axios": "^0.14.0",
     "@types/lodash": "^4.14.182",
+    "@types/ws": "^8.5.3",
     "@vitejs/plugin-vue-jsx": "^1.3.10",
     "@vueuse/core": "^8.2.6",
     "axios": "^0.26.1",
     "eslint-config-airbnb": "^19.0.4",
     "lodash": "^4.17.21",
     "pinia": "^2.0.13",
-    "sqlite3": "^5.0.2"
+    "robotjs": "^0.6.0",
+    "vkey": "^1.0.1",
+    "ws": "^8.5.0"
   }
 }
