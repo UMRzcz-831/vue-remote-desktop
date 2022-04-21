@@ -3,14 +3,14 @@
     <NMenu
       :options="menuOptions"
       :indent="16"
-      default-value="home"
+      :value="current"
       @update:value="handleUpdateValue"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { h, Component } from 'vue';
+import { h, Component, ref, watch, onMounted } from 'vue';
 import { MenuOption, NMenu, NIcon } from 'naive-ui';
 import {
   CompassOutline as CompassIcon,
@@ -23,6 +23,16 @@ const router = useRouter();
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) });
 }
+
+const current = ref<string>(router.currentRoute.value.name as string);
+
+watch(
+  () => router.currentRoute.value.name,
+  (name) => {
+    console.log(name);
+    current.value = name as string;
+  }
+);
 
 const menuOptions: MenuOption[] = [
   {
@@ -38,7 +48,7 @@ const menuOptions: MenuOption[] = [
 ];
 
 const handleUpdateValue = (key: string, item: MenuOption) => {
-  router.push('/' + key);
+  router.push({ name: key });
 };
 </script>
 
