@@ -12,10 +12,12 @@
   }
   .device-list {
     flex: 1;
-    border: 1px solid azure;
+    border-right: 1px solid rgba(255, 255, 255, 0.09);
     .n-list-item {
+      border-radius: 10px;
       cursor: pointer;
       padding: 10px 10px;
+      transition: background-color 0.3s;
       .device-list-item-prefix {
         .n-avatar__text {
           font-size: 2em;
@@ -34,15 +36,30 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
+      &:hover {
+        background: rgba(0, 0, 0, 0.33);
+      }
+      &.active {
+        background-color: rgba(#7fe7c4, .52);
+        color: #63e2b7;
+      }
     }
   }
   .device-detail {
     flex: 3;
-    border: 1px solid skyblue;
+    // border: 1px solid skyblue;
     .device-detail-title {
       padding: 10px;
       font-size: 24px;
       font-weight: 500;
+    }
+    .btns{
+      display: flex;
+      justify-content: flex-end;
+      margin-right: 50px;
+      button{
+        margin-left: 10px;
+      }
     }
     .device-detail-content {
       padding: 20px 40px;

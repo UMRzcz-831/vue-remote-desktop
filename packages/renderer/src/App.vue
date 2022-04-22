@@ -1,8 +1,10 @@
 <template>
   <NConfigProvider :theme="darkTheme" :theme-overrides="themeOverrides">
-    <NMessageProvider>
-      <router-view></router-view>
-    </NMessageProvider>
+    <NNotificationProvider>
+      <NMessageProvider>
+        <router-view></router-view>
+      </NMessageProvider>
+    </NNotificationProvider>
   </NConfigProvider>
 </template>
 <script setup lang="ts">
@@ -12,6 +14,7 @@ import {
   NConfigProvider,
   darkTheme,
   NMessageProvider,
+  NNotificationProvider,
   GlobalThemeOverrides,
 } from 'naive-ui';
 
@@ -28,6 +31,5 @@ const themeOverrides: GlobalThemeOverrides = {
     color: '#222',
   },
 };
-
 </script>
 <style></style>
