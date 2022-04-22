@@ -21,8 +21,7 @@ import { login } from '../../services';
 import { useUserStore } from '../../store';
 const Login = defineComponent({
   setup() {
-    onMounted(() => {
-    });
+    onMounted(() => {});
 
     const userSetup = useUserStore();
     const { setToken } = userSetup;

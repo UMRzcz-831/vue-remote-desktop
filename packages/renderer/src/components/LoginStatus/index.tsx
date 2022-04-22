@@ -14,7 +14,6 @@ const LoginStatus = defineComponent({
     const { preference } = storeToRefs(userSetup);
 
     onMounted(() => {
-      console.log(preference.value, 'mounted');
       if (isEmpty(preference.value)) {
         reqUserInfo();
       }

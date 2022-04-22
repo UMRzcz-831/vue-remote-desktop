@@ -1,9 +1,10 @@
 import { useStorageAsync } from '@vueuse/core';
 import { useMessage } from 'naive-ui';
 import { defineStore } from 'pinia';
+import { release, hostname, platform, version, userInfo } from 'os';
 import { ref, watch } from 'vue';
-import { getUserPreference } from '../services';
-import { PreferenceRes } from '../services/type';
+import { bindDevice, getUserPreference } from '../services';
+import { BindDeviceParams, PreferenceRes } from '../services/type';
 export const useUserStore = defineStore('user', () => {
   const msger = useMessage();
 
@@ -38,12 +39,40 @@ export const useUserStore = defineStore('user', () => {
       const { data, success } = await getUserPreference();
       if (success) {
         setPreference(data);
-        console.log(data);
+        getDeviceInfo();
+        await tryBindDevice(deviceInfo.value as BindDeviceParams);
       }
     } catch (error) {
       msger.error(error as string);
     }
   };
 
-  return { token, preference, setPreference, setToken, reqUserInfo };
+  const deviceInfo = ref<BindDeviceParams>();
+
+  const getDeviceInfo = () => {
+    deviceInfo.value = {
+      hostname: hostname(),
+      osPlatform: platform(),
+      osVersion: version(),
+      osAdmin: userInfo().username,
+    };
+  };
+
+  const tryBindDevice = async (deviceInfo: BindDeviceParams) => {
+    try {
+      const { success, msg } = await bindDevice(deviceInfo);
+      console.log(msg, success);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  return {
+    token,
+    preference,
+    setPreference,
+    setToken,
+    reqUserInfo,
+    getDeviceInfo,
+  };
 });

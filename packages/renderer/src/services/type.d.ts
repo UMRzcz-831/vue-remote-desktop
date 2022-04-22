@@ -49,3 +49,10 @@ export type DeviceListRes = {
   deviceId: number;
   device: Pick<DeviceDetailRes, 'alias' | 'hostname'>;
 }[];
+
+export type BindDeviceParams = {
+  hostname: string;
+  osPlatform: NodeJS.Platform;
+  osVersion: string;
+  osAdmin: string;
+};
