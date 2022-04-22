@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
-import { send as sendMainWindow, send as sendControlWindow } from '../index';
-import { createControlWindow } from '../control';
+import { send as sendMainWindow } from '../index';
+import { createControlWindow, send as sendControlWindow } from '../control';
 import signal from '../signal';
 
 const handleIPC = () => {
@@ -22,7 +22,7 @@ const handleIPC = () => {
     sendMainWindow('control-state-change', data.remote, 2);
   });
 
-  ipcMain.on('forward', async (e, event, data) => {
+  ipcMain.on('forward', (e, event, data) => {
     signal.send?.('forward', { event, data });
   });
 
@@ -35,10 +35,12 @@ const handleIPC = () => {
   });
 
   signal.on('puppet-candidate', (data) => {
+    // console.log('puppet-candidate signal receive', data);
     sendControlWindow('candidate', data);
   });
 
   signal.on('control-candidate', (data) => {
+    // console.log('control-candidate signal receive', data);
     sendMainWindow('candidate', data);
   });
 };

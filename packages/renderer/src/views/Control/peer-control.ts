@@ -4,29 +4,6 @@ const peer = new EventEmitter();
 const { ipcRenderer, desktopCapturer } = require('electron');
 const pc = new window.RTCPeerConnection({});
 
-// const getScreenStream = async () => {
-//   const sources = await desktopCapturer.getSources({ types: ['screen'] });
-//   // @ts-ignore
-//   navigator.webkitGetUserMedia(
-//     {
-//       audio: false,
-//       video: {
-//         mandatory: {
-//           chromeMediaSource: 'desktop',
-//           chromeMediaSourceId: sources[0].id,
-//           maxWidth: window.screen.width,
-//           maxHeight: window.screen.height,
-//         },
-//       },
-//     },
-//     (stream: string) => {
-//       peer.emit('add-stream', stream);
-//     },
-//     (err: string) => {
-//       console.log(err);
-//     }
-//   );
-// };
 let dc = pc.createDataChannel('robotchannel');
 console.log('before-opened', dc);
 dc.onopen = function () {
@@ -39,15 +16,15 @@ dc.onmessage = function (event) {
   console.log('message', event);
 };
 dc.onerror = (e) => {
-  console.log(e);
+  console.log('dc error', e);
 };
 async function createOffer() {
-  let offer = await pc.createOffer({
+  const offer = await pc.createOffer({
     offerToReceiveAudio: false,
     offerToReceiveVideo: true,
   });
   await pc.setLocalDescription(offer);
-  console.log('create-offer\n', JSON.stringify(pc.localDescription));
+  // console.log('control create-offer\n', JSON.stringify(pc.localDescription));
   return pc.localDescription;
 }
 createOffer().then((offer) => {
@@ -58,16 +35,24 @@ createOffer().then((offer) => {
 });
 
 async function setRemote(answer: RTCSessionDescriptionInit) {
+  console.log('set remote', answer);
   await pc.setRemoteDescription(answer);
-  console.log('create-answer', pc);
 }
 
 ipcRenderer.on('answer', (e, answer) => {
-  setRemote(answer);
+  console.log('control answer', answer);
+  setRemote(answer.data);
 });
 
-ipcRenderer.on('candidate', (e, candidate) => {
-  addIceCandidate(candidate);
+ipcRenderer.on('candidate', async (e, candidate) => {
+  let can = {};
+  try {
+    can = JSON.parse(candidate.data);
+  } catch (error) {
+    console.log('parse candidate fail', error, candidate.data);
+  }
+  console.log('control candidate', can);
+  await addIceCandidate(can);
 });
 
 // window.setRemote = setRemote;
@@ -75,18 +60,21 @@ ipcRenderer.on('candidate', (e, candidate) => {
 pc.onicecandidate = (e) => {
   console.log('candidate', JSON.stringify(e.candidate));
   if (e.candidate) {
-    ipcRenderer.send('forward', 'control-candidate', JSON.stringify(e.candidate));
+    ipcRenderer.send(
+      'forward',
+      'control-candidate',
+      JSON.stringify(e.candidate)
+    );
   }
   // 告知其他人
 };
 let candidates: RTCIceCandidateInit[] = [];
-async function addIceCandidate(candidate: RTCIceCandidateInit) {
-  // @ts-ignore
-  if (!candidate || !candidate.type) return;
+async function addIceCandidate(candidate: RTCIceCandidateInit | null) {
+  if (!candidate) return;
   candidates.push(candidate);
   if (pc.remoteDescription && pc.remoteDescription.type) {
-    for (let i = 0; i < candidates.length; i++) {
-      await pc.addIceCandidate(new RTCIceCandidate(candidates[i]));
+    for (let can of candidates) {
+      await pc.addIceCandidate(new RTCIceCandidate(can));
     }
     candidates = [];
   }

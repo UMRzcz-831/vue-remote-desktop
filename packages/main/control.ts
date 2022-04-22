@@ -1,10 +1,10 @@
 import electron, { app, BrowserWindow, shell } from 'electron';
 import { release, hostname, platform, version, userInfo } from 'os';
 import { join, resolve } from 'path';
-let win: BrowserWindow | null = null;
+let controlWin: BrowserWindow | null = null;
 
 export async function createControlWindow() {
-  win = new BrowserWindow({
+  controlWin = new BrowserWindow({
     title: 'Main window',
     width: 1024,
     height: 576,
@@ -15,27 +15,20 @@ export async function createControlWindow() {
   });
 
   if (app.isPackaged) {
-    win.loadFile(join(__dirname, '../renderer/index.html/#/control'));
+    controlWin.loadFile(join(__dirname, '../renderer/index.html/#/control'));
     console.log('path', join(__dirname, '../renderer/index.html'));
   } else {
     // 🚧 Use ['ENV_NAME'] avoid vite:define plugin
     const url = `http://${process.env['VITE_DEV_SERVER_HOST']}:${process.env['VITE_DEV_SERVER_PORT']}/#/control`;
 
-    win.loadURL(url);
-    win.webContents.openDevTools();
-    console.log(
-      JSON.stringify({
-        hostname: hostname(),
-        platform: platform(),
-        version: version(),
-        osAdmin: userInfo().username,
-      })
-    );
+    controlWin.loadURL(url);
+    controlWin.webContents.openDevTools();
+    console.log('control');
   }
 
   // Communicate with the Renderer-process.
 }
 
 export const send = (channel: string, ...args: any[]) => {
-  win?.webContents.send(channel, ...args);
+  controlWin?.webContents.send(channel, ...args);
 };

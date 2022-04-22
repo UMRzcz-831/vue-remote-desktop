@@ -39,7 +39,7 @@ async function getScreenStream() {
         resolve(stream);
       },
       (err: any) => {
-        console.log('add-stream-err',err);
+        console.log('add-stream-err', err);
         reject(err);
       }
     );
@@ -49,40 +49,61 @@ async function getScreenStream() {
 // 创建RTC answer
 async function createAnswer(offer: RTCSessionDescriptionInit) {
   let screenStream = await getScreenStream();
-  // @ts-ignore
-  pc.addStream(screenStream);
-  await pc.setRemoteDescription(offer);
-  await pc.setLocalDescription(await pc.createAnswer());
-  console.log('create answer \n', JSON.stringify(pc.localDescription));
+  try {
+    // @ts-ignore
+    pc.addStream(screenStream);
+  } catch (error) {
+    console.log('add-stream-err', error);
+  }
+  try {
+    await pc.setRemoteDescription(offer);
+  } catch (error) {
+    console.log('setRemote fail', error, offer);
+  }
+  try {
+    await pc.setLocalDescription(await pc.createAnswer());
+  } catch (error) {
+    console.log('set local fail', error);
+  }
+  // console.log('create answer \n', JSON.stringify(pc.localDescription));
 
   return pc.localDescription as RTCSessionDescription;
 }
 pc.onicecandidate = (e) => {
   console.log('candidate', JSON.stringify(e.candidate));
   if (e.candidate) {
-    ipcRenderer.send('forward', 'puppet-candidate', JSON.stringify(e.candidate));
+    ipcRenderer.send(
+      'forward',
+      'puppet-candidate',
+      JSON.stringify(e.candidate)
+    );
   }
   // 告知其他人
 };
 let candidates: RTCIceCandidateInit[] = [];
 async function addIceCandidate(candidate: RTCIceCandidateInit | null) {
-  // @ts-ignore
-  if (!candidate || !candidate.type) return;
+  if (!candidate) return;
   candidates.push(candidate);
   if (pc.remoteDescription && pc.remoteDescription.type) {
-    for (let i = 0; i < candidates.length; i++) {
-      await pc.addIceCandidate(new RTCIceCandidate(candidates[i]));
+    for (let can of candidates) {
+      await pc.addIceCandidate(new RTCIceCandidate(can));
     }
     candidates = [];
   }
 }
 
-ipcRenderer.on('candidate', (e, candidate) => {
-  addIceCandidate(candidate);
+ipcRenderer.on('candidate', async (e, candidate) => {
+  let can = {};
+  try {
+    can = JSON.parse(candidate.data);
+  } catch (error) {
+    console.log('parse candidate fail', error, candidate.data);
+  }
+  await addIceCandidate(can);
 });
 
 ipcRenderer.on('offer', async (e, offer) => {
-  const answer = await createAnswer(offer);
+  const answer = await createAnswer(offer.data);
   ipcRenderer.send('forward', 'answer', {
     type: answer.type,
     sdp: answer.sdp,

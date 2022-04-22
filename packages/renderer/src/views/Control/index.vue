@@ -3,13 +3,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, defineComponent } from 'vue';
+import { ref, onMounted } from 'vue';
+import { ipcRenderer } from 'electron';
 import peer from './peer-control';
 import { MouseData } from './types';
 
 const videoStreamRef = ref<HTMLVideoElement | null>(null);
 
 onMounted(() => {
+  console.log('mounted', videoStreamRef.value);
+
   peer.on('add-stream', (stream: MediaProvider) => {
     console.log('play stream', videoStreamRef.value);
     play(stream);
