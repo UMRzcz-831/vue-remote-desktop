@@ -1,5 +1,5 @@
 {
-  "name": "electron-vue-vite",
+  "name": "vue-remote-desktop",
   "version": "1.0.0",
   "main": "dist/main/index.cjs",
   "author": "umrjs",
@@ -15,8 +15,7 @@
   "build": {
     "appId": "remoteDesktop",
     "productName": "remoteDesktop",
-    "copyright": "Copyright © year ${author}",
-    "extends": null
+    "copyright": "Copyright © 2022 umrjs"
   },
   "engines": {
     "node": ">=14.17.0"
