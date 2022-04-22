@@ -6,8 +6,8 @@ type Signal = EventEmitter & {
   send?: (event: string, data: any) => void;
 };
 
-// const ws = new WebSocket('ws://localhost:7777/');
-const ws = new WebSocket('ws://api.umr831.com/ws/');
+const ws = new WebSocket('ws://localhost:7777/');
+// const ws = new WebSocket('ws://api.umr831.com/ws/');
 const signal: Signal = new EventEmitter();
 
 ws.on('open', () => {

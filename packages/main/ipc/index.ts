@@ -13,6 +13,11 @@ const handleIPC = () => {
     signal.send?.('control', { remote: remoteCode });
   });
 
+  signal.on('remoteNotFound', (data) => {
+    console.log(data);
+    sendMainWindow('remote-notFound', data);
+  });
+
   signal.on('controlled', (data) => {
     sendMainWindow('control-state-change', data.remote, 1);
     createControlWindow();

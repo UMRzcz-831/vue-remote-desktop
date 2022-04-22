@@ -3,7 +3,7 @@ import { release, hostname, platform, version, userInfo } from 'os';
 import { join, resolve } from 'path';
 import handleIPC from './ipc';
 import Robot from './robot';
-import { setAppMenu, setTray } from './tray/win32';
+import { setTray } from './tray/win32';
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration();
 
@@ -23,6 +23,7 @@ async function createWindow() {
     title: 'Main window',
     width: 1024,
     height: 576,
+    resizable: false,
     webPreferences: {
       preload: join(__dirname, '../preload/index.cjs'),
       nodeIntegration: true,
@@ -38,14 +39,7 @@ async function createWindow() {
 
     win.loadURL(url);
     win.webContents.openDevTools();
-    // console.log(
-    //   JSON.stringify({
-    //     hostname: hostname(),
-    //     platform: platform(),
-    //     version: version(),
-    //     osAdmin: userInfo().username,
-    //   })
-    // );
+
   }
 
   // Communicate with the Renderer-process.
@@ -60,7 +54,7 @@ async function createWindow() {
   });
 
   win.on('close', (e) => {
-    console.log('close',willQuit);
+    console.log('close', willQuit);
     if (willQuit) {
       win = null;
     } else {
@@ -94,7 +88,6 @@ app.on('ready', async () => {
   // }
   Robot();
   handleIPC();
-  setAppMenu();
   setTray();
   await createWindow();
 });

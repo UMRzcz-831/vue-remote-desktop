@@ -1,6 +1,13 @@
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { NButton, NDivider, NForm, NFormItem, NInput } from 'naive-ui';
+import {
+  NButton,
+  NDivider,
+  NForm,
+  NFormItem,
+  NInput,
+  useNotification,
+} from 'naive-ui';
 import './index.scss';
 import { ipcRenderer } from 'electron';
 
@@ -11,11 +18,15 @@ const Home = defineComponent({
     onMounted(() => {
       registLocal();
       ipcRenderer.on('control-state-change', handleControlState);
+
+      ipcRenderer.on('remote-notFound', handleCodeNotFound);
     });
 
     onUnmounted(() => {
       ipcRenderer.removeListener('control-state-change', handleControlState);
     });
+
+    const notify = useNotification();
     const remoteCode = ref('');
     const localCode = ref('');
     const controlText = ref('未连接');
@@ -28,6 +39,13 @@ const Home = defineComponent({
 
     const handleStartControl = () => {
       ipcRenderer.send('control', remoteCode.value);
+    };
+
+    const handleCodeNotFound = (e: any, data: { remote: number }) => {
+      notify.warning({
+        content: `未找到识别码为${data.remote}的机器`,
+        duration: 3000,
+      });
     };
 
     const handleControlState = (event: any, name: string, type: number) => {
@@ -58,13 +76,13 @@ const Home = defineComponent({
                 </div>
               </NFormItem>
             </NForm>
-            <NForm label-width="auto" size="large" show-feedback={false}>
+            {/* <NForm label-width="auto" size="large" show-feedback={false}>
               <NFormItem label="本机验证码">
                 <div class="local-info-local-verify">
                   <span>2aJBn0</span>
                 </div>
               </NFormItem>
-            </NForm>
+            </NForm> */}
           </div>
         </div>
         <div class="remote-info">
