@@ -27,18 +27,6 @@ const pc = new window.RTCPeerConnection({});
 //     }
 //   );
 // };
-// getScreenStream();
-// peer.on('robot', (type: ActionType, data: DataType) => {
-//   if (type === 'mouse') {
-//     (data as MouseData).screen = {
-//       width: window.screen.width,
-//       height: window.screen.height,
-//     };
-//   }
-//   setTimeout(() => {
-//     ipcRenderer.send('robot', type, data);
-//   }, 500);
-// });
 let dc = pc.createDataChannel('robotchannel');
 console.log('before-opened', dc);
 dc.onopen = function () {
@@ -69,6 +57,11 @@ createOffer().then((offer) => {
   }
 });
 
+async function setRemote(answer: RTCSessionDescriptionInit) {
+  await pc.setRemoteDescription(answer);
+  console.log('create-answer', pc);
+}
+
 ipcRenderer.on('answer', (e, answer) => {
   setRemote(answer);
 });
@@ -77,16 +70,13 @@ ipcRenderer.on('candidate', (e, candidate) => {
   addIceCandidate(candidate);
 });
 
-async function setRemote(answer: RTCSessionDescriptionInit) {
-  await pc.setRemoteDescription(answer);
-  console.log('create-answer', pc);
-}
-
 // window.setRemote = setRemote;
 
 pc.onicecandidate = (e) => {
   console.log('candidate', JSON.stringify(e.candidate));
-  ipcRenderer.send('forward', 'control-candidate', e.candidate);
+  if (e.candidate) {
+    ipcRenderer.send('forward', 'control-candidate', JSON.stringify(e.candidate));
+  }
   // 告知其他人
 };
 let candidates: RTCIceCandidateInit[] = [];

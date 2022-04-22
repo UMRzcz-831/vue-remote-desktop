@@ -4,7 +4,7 @@ import { MouseData } from '../views/Control/types';
 const pc = new RTCPeerConnection({});
 
 pc.ondatachannel = (e) => {
-  console.log(e);
+  console.log('datachannel', e);
   e.channel.onmessage = (e) => {
     let { type, data } = JSON.parse(e.data);
     if (type === 'mouse') {
@@ -38,7 +38,10 @@ async function getScreenStream() {
         console.log('add-stream', stream);
         resolve(stream);
       },
-      reject
+      (err: any) => {
+        console.log('add-stream-err',err);
+        reject(err);
+      }
     );
   });
 }
@@ -52,11 +55,13 @@ async function createAnswer(offer: RTCSessionDescriptionInit) {
   await pc.setLocalDescription(await pc.createAnswer());
   console.log('create answer \n', JSON.stringify(pc.localDescription));
 
-  return pc.localDescription;
+  return pc.localDescription as RTCSessionDescription;
 }
 pc.onicecandidate = (e) => {
   console.log('candidate', JSON.stringify(e.candidate));
-  ipcRenderer.send('forward', 'control-candidate', e.candidate);
+  if (e.candidate) {
+    ipcRenderer.send('forward', 'puppet-candidate', JSON.stringify(e.candidate));
+  }
   // 告知其他人
 };
 let candidates: RTCIceCandidateInit[] = [];
@@ -71,7 +76,15 @@ async function addIceCandidate(candidate: RTCIceCandidateInit | null) {
     candidates = [];
   }
 }
-// @ts-ignore
-window.createAnswer = createAnswer;
-// @ts-ignore
-window.addIceCandidate = addIceCandidate;
+
+ipcRenderer.on('candidate', (e, candidate) => {
+  addIceCandidate(candidate);
+});
+
+ipcRenderer.on('offer', async (e, offer) => {
+  const answer = await createAnswer(offer);
+  ipcRenderer.send('forward', 'answer', {
+    type: answer.type,
+    sdp: answer.sdp,
+  });
+});

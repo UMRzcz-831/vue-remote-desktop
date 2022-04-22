@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron';
 import robot from 'robotjs';
+// @ts-ignore
 import vkey from 'vkey';
 
 type ActionType = 'mouse' | 'keyboard';
