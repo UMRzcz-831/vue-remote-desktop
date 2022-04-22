@@ -3,6 +3,7 @@ import { release, hostname, platform, version, userInfo } from 'os';
 import { join, resolve } from 'path';
 import handleIPC from './ipc';
 import Robot from './robot';
+import { setAppMenu, setTray } from './tray/win32';
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration();
 
@@ -16,7 +17,7 @@ if (!app.requestSingleInstanceLock()) {
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
 let win: BrowserWindow | null = null;
-
+let willQuit = false;
 async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
@@ -58,6 +59,16 @@ async function createWindow() {
     }
   });
 
+  win.on('close', (e) => {
+    console.log('close',willQuit);
+    if (willQuit) {
+      win = null;
+    } else {
+      e.preventDefault();
+      win?.hide();
+    }
+  });
+
   // // Test active push message to Renderer-process
   // win.webContents.on('did-finish-load', () => {
   //   win?.webContents.send('main-process-message', new Date().toLocaleString());
@@ -70,6 +81,8 @@ async function createWindow() {
   // });
 }
 
+app.applicationMenu = null;
+
 app.on('ready', async () => {
   // let uri = resolve(process.cwd(), './devtools-6.1.4/shell-chrome');
   // try {
@@ -79,8 +92,10 @@ app.on('ready', async () => {
   // } catch (e) {
   //   console.log('Failed to load chrome devtools');
   // }
-  Robot()
+  Robot();
   handleIPC();
+  setAppMenu();
+  setTray();
   await createWindow();
 });
 // app.whenReady().then(createWindow);
@@ -99,14 +114,29 @@ app.on('second-instance', () => {
 });
 
 app.on('activate', () => {
-  const allWindows = BrowserWindow.getAllWindows();
-  if (allWindows.length) {
-    allWindows[0].focus();
-  } else {
-    createWindow();
-  }
+  // const allWindows = BrowserWindow.getAllWindows();
+  // if (allWindows.length) {
+  //   allWindows[0].focus();
+  // } else {
+  //   createWindow();
+  // }
+  show();
+});
+
+app.on('before-quit', () => {
+  close();
 });
 
 export const send = (channel: string, ...args: any[]) => {
   win?.webContents.send(channel, ...args);
+};
+
+const close = () => {
+  willQuit = true;
+  win?.close();
+};
+
+export const show = () => {
+  if (win?.isMinimized()) win.restore();
+  win?.show();
 };
