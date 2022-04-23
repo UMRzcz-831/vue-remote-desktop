@@ -10,12 +10,18 @@
     "build": "electron-builder",
     "init": "git config core.hooksPath .git/hooks/ && rm -rf .git/hooks && npx simple-git-hooks",
     "test:e2e": "npx playwright test",
-    "test:e2e:headless": "npx playwright test --headed"
+    "test:e2e:headless": "npx playwright test --headed",
+    "postinstall": "electron-builder install-app-deps"
   },
   "build": {
-    "appId": "remoteDesktop",
     "productName": "remoteDesktop",
-    "copyright": "Copyright © 2022 umrjs"
+    "copyright": "Copyright © 2022 umrjs",
+    "win": {
+      "target": [
+        "nsis",
+        "zip"
+      ]
+    }
   },
   "engines": {
     "node": ">=14.17.0"
