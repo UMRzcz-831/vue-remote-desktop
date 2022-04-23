@@ -10,7 +10,7 @@ import {
 } from 'naive-ui';
 import './index.scss';
 import { ipcRenderer } from 'electron';
-
+import { useHomeStore } from '../../store/home';
 import '../../utils/peer-puppet';
 
 const Home = defineComponent({
@@ -26,15 +26,17 @@ const Home = defineComponent({
       ipcRenderer.removeListener('control-state-change', handleControlState);
     });
 
+    const homeSetup = useHomeStore();
+    const { setLocalCode } = homeSetup;
+    const { localCode } = storeToRefs(homeSetup);
     const notify = useNotification();
     const remoteCode = ref('');
-    const localCode = ref('');
     const controlText = ref('未连接');
 
     const registLocal = async () => {
       const code = await ipcRenderer.invoke('registLocal');
       console.log('code', code);
-      localCode.value = code;
+      setLocalCode(code);
     };
 
     const handleStartControl = () => {
