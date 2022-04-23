@@ -184,13 +184,13 @@ const Login = defineComponent({
             <NTabPane name="signup" tab="注册">
               <NForm>
                 <NFormItemRow label="用户名">
-                  <NInput />
+                  <NInput placeholder="输入用户名"/>
                 </NFormItemRow>
                 <NFormItemRow label="密码">
-                  <NInput />
+                  <NInput placeholder="输入密码"/>
                 </NFormItemRow>
                 <NFormItemRow label="重复密码">
-                  <NInput />
+                  <NInput placeholder="再次输入密码" />
                 </NFormItemRow>
               </NForm>
               <NButton type="primary" block secondary strong>
