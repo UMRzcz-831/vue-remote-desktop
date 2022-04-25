@@ -1,0 +1,18 @@
+.preference-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  .n-card {
+    width: 60%;
+    .n-upload-file-list .n-upload-file.n-upload-file--image-card-type{
+        width: 150px;
+        height: 150px;
+    }
+    .n-input {
+        width: 300px;
+    }
+  }
+}

@@ -12,11 +12,12 @@ import {
   FormInst,
   useMessage,
   UploadFileInfo,
+  NSwitch,
 } from 'naive-ui';
 import type { UploadProps } from 'naive-ui/lib/upload';
 
 import './index.scss';
-import { uploadFile } from '../../services';
+import { updatePreference, uploadFile } from '../../services';
 import { useUserStore } from '../../store';
 
 const Login = defineComponent({
@@ -24,14 +25,15 @@ const Login = defineComponent({
     onMounted(() => {});
 
     const userSetup = useUserStore();
-    const { preference } = storeToRefs(userSetup);
+    const { preference } = userSetup;
+    const editValue = ref({ ...preference });
     const submitLoading = ref(false);
     const msger = useMessage();
     const router = useRouter();
     const fileList = ref<UploadFileInfo[]>([
       {
         url:
-          preference.value.avatarUrl ||
+          editValue.value.avatarUrl ||
           'https://avatars0.githubusercontent.com/u/9183485?s=200&v=4',
         id: 'avatar',
         name: 'avatar',
@@ -39,7 +41,23 @@ const Login = defineComponent({
       },
     ]);
 
-    const handleSave = () => {};
+    const handleSave = async () => {
+      submitLoading.value = true;
+      try {
+        const { success, msg } = await updatePreference(editValue.value);
+        submitLoading.value = false;
+        if (success) {
+          msger.success(msg);
+          await userSetup.reqUserInfo();
+          // router.push('/');
+        } else {
+          msger.error(msg);
+        }
+      } catch (error) {
+        submitLoading.value = false;
+        throw error;
+      }
+    };
 
     const handleUploadFile: UploadProps['onBeforeUpload'] = async ({
       file,
@@ -51,7 +69,7 @@ const Login = defineComponent({
           const { success, msg, data } = await uploadFile(formData);
           if (success) {
             const { url } = data;
-            preference.value.avatarUrl = url;
+            editValue.value.avatarUrl = url;
           } else {
             msger.error(msg);
           }
@@ -63,24 +81,19 @@ const Login = defineComponent({
 
     return {
       submitLoading,
-      preference,
+      editValue,
       fileList,
       handleSave,
       handleUploadFile,
     };
   },
   render() {
-    const {
-      submitLoading,
-      handleSave,
-      handleUploadFile,
-      preference,
-      fileList,
-    } = this;
+    const { submitLoading, handleSave, handleUploadFile, editValue, fileList } =
+      this;
     return (
       <div class="preference-wrapper">
         <NCard bordered={false}>
-          <NForm ref="signin" model={preference}>
+          <NForm ref="signin" model={editValue} labelPlacement="left">
             <NFormItemRow label="头像" path="avatarUrl">
               <NUpload
                 max={1}
@@ -89,22 +102,28 @@ const Login = defineComponent({
                 list-type="image-card"
               ></NUpload>
             </NFormItemRow>
-            <NFormItemRow label="手机号" path="mobile">
+            <NFormItemRow label="昵称" path="nickname">
               <NInput
-                // v-model:value={loginValue.mobile}
-                placeholder="请输入手机号"
+                v-model:value={editValue.nickname}
+                placeholder="请输入昵称"
               />
             </NFormItemRow>
 
-            <NFormItemRow label="密码" path="password">
-              <NInput
-                type="password"
-                // v-model:value={loginValue.password}
-                placeholder="请输入密码"
-              />
+            <NFormItemRow label="主题" path="theme">
+              <NSwitch
+                v-model:value={editValue.theme}
+                checkedValue="1"
+                uncheckedValue="0"
+                round={false}
+                v-slots={{
+                  checked: () => '深夜模式',
+                  unchecked: () => '白昼模式',
+                }}
+              ></NSwitch>
             </NFormItemRow>
           </NForm>
           <NButton
+            class="save-button"
             type="primary"
             block
             secondary

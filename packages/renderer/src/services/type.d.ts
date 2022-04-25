@@ -17,6 +17,13 @@ export type PreferenceRes = {
   theme: string;
 };
 
+export type UpdatePreferenceParams = {
+  id?: number;
+  nickname?: string;
+  avatarUrl?: string | null;
+  theme?: string;
+};
+
 export type LoginParams = {
   username?: string;
   password: string;
@@ -57,7 +64,7 @@ export type BindDeviceParams = {
   osAdmin: string;
 };
 
-export type UploadParams = FormData
+export type UploadParams = FormData;
 
 export type UploadRes = {
   url: string;

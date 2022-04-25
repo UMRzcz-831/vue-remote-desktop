@@ -10,9 +10,11 @@ import {
   BindDeviceParams,
   UploadParams,
   UploadRes,
+  UpdatePreferenceParams,
 } from './type';
 const urls = {
   getUserPreference: '/preference/query',
+  updatePreference: '/preference/update',
   login: '/user/login',
   regist: '/user/regist',
   getDeviceList: '/device/list',
@@ -28,6 +30,15 @@ export const getUserPreference = async (): Promise<
 > => {
   return request(urls.getUserPreference, {
     method: 'GET',
+  });
+};
+
+export const updatePreference = async (
+  params: UpdatePreferenceParams
+): Promise<CommonResponse<any>> => {
+  return request(urls.updatePreference, {
+    method: 'PUT',
+    data: params,
   });
 };
 
