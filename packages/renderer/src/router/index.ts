@@ -23,6 +23,11 @@ const routes: RouteRecordRaw[] = [
         name: 'devices',
         component: () => import('../views/Devices/index'),
       },
+      {
+        path: '/settings',
+        name: 'settings',
+        component: () => import('../views/Preference/index'),
+      },
     ],
   },
   {

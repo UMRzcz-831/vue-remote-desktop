@@ -56,3 +56,11 @@ export type BindDeviceParams = {
   osVersion: string;
   osAdmin: string;
 };
+
+export type UploadParams = FormData
+
+export type UploadRes = {
+  url: string;
+  hash: string;
+  key: string;
+};

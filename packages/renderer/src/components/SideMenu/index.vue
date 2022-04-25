@@ -15,6 +15,7 @@ import { MenuOption, NMenu, NIcon } from 'naive-ui';
 import {
   CompassOutline as CompassIcon,
   DesktopOutline as DesktopIcon,
+  SettingsOutline as SettingIcon,
 } from '@vicons/ionicons5';
 import { useRouter } from 'vue-router';
 
@@ -44,6 +45,11 @@ const menuOptions: MenuOption[] = [
     label: '设备列表',
     key: 'devices',
     icon: renderIcon(DesktopIcon),
+  },
+  {
+    label: '偏好设置',
+    key: 'settings',
+    icon: renderIcon(SettingIcon),
   },
 ];
 

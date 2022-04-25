@@ -1,6 +1,5 @@
 import request from '../utils/request';
 import { CommonResponse } from '../types/common';
-import { BindDeviceParams } from './type';
 import {
   PreferenceRes,
   LoginRes,
@@ -8,6 +7,9 @@ import {
   DeviceListRes,
   DeviceDetailRes,
   DeviceDetailParams,
+  BindDeviceParams,
+  UploadParams,
+  UploadRes,
 } from './type';
 const urls = {
   getUserPreference: '/preference/query',
@@ -17,6 +19,7 @@ const urls = {
   getDeviceDetail: '/device',
   unbindDevice: '/device/unbind',
   bindDevice: '/device/bindDevice',
+  uploadFile: '/upload',
 };
 
 // get请求，后端通过token获取用户信息
@@ -72,5 +75,14 @@ export const bindDevice = async (
   return request(urls.bindDevice, {
     method: 'POST',
     data: params,
+  });
+};
+
+export const uploadFile = async (
+  data: UploadParams
+): Promise<CommonResponse<UploadRes>> => {
+  return request(urls.uploadFile, {
+    method: 'POST',
+    data,
   });
 };
