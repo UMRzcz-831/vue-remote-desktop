@@ -13,6 +13,7 @@
 import {
   NConfigProvider,
   darkTheme,
+  lightTheme,
   NMessageProvider,
   NNotificationProvider,
   GlobalThemeOverrides,
