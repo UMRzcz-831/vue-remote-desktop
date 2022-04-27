@@ -15,8 +15,8 @@ export async function createControlWindow() {
   });
 
   if (app.isPackaged) {
-    controlWin.loadFile(join(__dirname, '../renderer/index.html/#/control'));
-    console.log('path', join(__dirname, '../renderer/index.html'));
+    controlWin.loadFile(join(__dirname, '../renderer/control.html'));
+    console.log('path', join(__dirname, '../renderer/control.html'));
   } else {
     // 🚧 Use ['ENV_NAME'] avoid vite:define plugin
     const url = `http://${process.env['VITE_DEV_SERVER_HOST']}:${process.env['VITE_DEV_SERVER_PORT']}/#/control`;

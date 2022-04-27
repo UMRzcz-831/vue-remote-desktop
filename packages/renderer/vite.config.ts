@@ -23,6 +23,9 @@ export default defineConfig({
        *   'electron-store': 'const Store = require("electron-store"); export default Store;',
        * }
        */
+      {
+        robot: 'const robot = require("robotjs"); export default robot;',
+      }
     ),
   ],
   resolve: {
@@ -34,6 +37,12 @@ export default defineConfig({
   build: {
     sourcemap: true,
     outDir: '../../dist/renderer',
+    rollupOptions:{
+      input:{
+        "control": path.resolve(__dirname, 'control.html'),
+        "index": path.resolve(__dirname, 'index.html'),
+      }
+    }
   },
   server: {
     host: pkg.env.VITE_DEV_SERVER_HOST,
