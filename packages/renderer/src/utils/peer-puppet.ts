@@ -48,10 +48,11 @@ async function getScreenStream() {
 
 // 创建RTC answer
 async function createAnswer(offer: RTCSessionDescriptionInit) {
-  let screenStream = await getScreenStream();
+  let screenStream = (await getScreenStream()) as MediaStream;
   try {
-    // @ts-ignore
-    pc.addStream(screenStream);
+    screenStream.getTracks().forEach((track) => {
+      pc.addTrack(track, screenStream);
+    });
   } catch (error) {
     console.log('add-stream-err', error);
   }
