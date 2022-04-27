@@ -35,7 +35,7 @@ window.onkeydown = function (e) {
     control: e.ctrlKey,
     alt: e.altKey,
   };
-  peer.emit('robot', 'key', data);
+  peer.emit('robot', 'keyboard', data);
 };
 
 window.onmouseup = function (e) {
