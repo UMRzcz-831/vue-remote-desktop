@@ -16,7 +16,7 @@ export type KeyData = {
   keyCode: number;
   meta: boolean;
   alt: boolean;
-  ctrl: boolean;
+  control: boolean;
   shift: boolean;
 };
 
