@@ -51,6 +51,10 @@ const keyMap: Record<string, string> = {
   '<option>': 'option',
   '<control>': 'control',
   '<alt>': 'alt',
+  '<up>': 'up',
+  '<down>': 'down',
+  '<left>': 'left',
+  '<right>': 'right',
 };
 
 function handleMouse(data: MouseData) {
