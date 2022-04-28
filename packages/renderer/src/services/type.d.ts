@@ -31,6 +31,12 @@ export type LoginParams = {
   type: 0 | 1; // 0: 用户名密码登录 1: 手机号登录
 };
 
+export type RegistParams = {
+  username: string;
+  password: string;
+  mobile: string;
+}
+
 export type LoginRes = {
   token: string;
 };

@@ -11,6 +11,7 @@ import {
   UploadParams,
   UploadRes,
   UpdatePreferenceParams,
+  RegistParams,
 } from './type';
 const urls = {
   getUserPreference: '/preference/query',
@@ -47,6 +48,16 @@ export const login = async (
   data: LoginParams
 ): Promise<CommonResponse<LoginRes>> => {
   return request(urls.login, {
+    method: 'POST',
+    data,
+  });
+};
+
+// regist
+export const regist = async (
+  data: RegistParams
+): Promise<CommonResponse<any>> => {
+  return request(urls.regist, {
     method: 'POST',
     data,
   });
