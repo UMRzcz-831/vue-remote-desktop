@@ -1,5 +1,8 @@
 <template>
-  <NConfigProvider :theme="darkTheme" :theme-overrides="themeOverrides">
+  <NConfigProvider
+    :theme="theme"
+    :theme-overrides="preference.theme === '1' ? themeOverrides : null"
+  >
     <NNotificationProvider>
       <NMessageProvider>
         <router-view></router-view>
@@ -8,8 +11,6 @@
   </NConfigProvider>
 </template>
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 import {
   NConfigProvider,
   darkTheme,
@@ -18,6 +19,19 @@ import {
   NNotificationProvider,
   GlobalThemeOverrides,
 } from 'naive-ui';
+import { computed, watch, ref } from 'vue';
+import { useUserStore } from './store/index';
+import { storeToRefs } from 'pinia';
+
+const userSetup = useUserStore();
+const { preference } = storeToRefs(userSetup);
+
+const theme = ref(preference.value.theme === '1' ? darkTheme : lightTheme);
+console.log('theme', preference.value.theme);
+
+watch(preference, (newV) => {
+  theme.value = newV.theme === '1' ? darkTheme : lightTheme;
+});
 
 const themeOverrides: GlobalThemeOverrides = {
   //   common: {

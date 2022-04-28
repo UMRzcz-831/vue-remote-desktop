@@ -2,12 +2,10 @@ import { useStorageAsync } from '@vueuse/core';
 import { useMessage } from 'naive-ui';
 import { defineStore } from 'pinia';
 import { release, hostname, platform, version, userInfo } from 'os';
-import { ref, watch } from 'vue';
+import { ref, watch, defineEmits } from 'vue';
 import { bindDevice, getUserPreference } from '../services';
 import { BindDeviceParams, PreferenceRes } from '../services/type';
 export const useUserStore = defineStore('user', () => {
-  const msger = useMessage();
-
   /**
    * token hook
    */
@@ -35,6 +33,8 @@ export const useUserStore = defineStore('user', () => {
   };
   // 请求用户信息
   const reqUserInfo = async () => {
+    const msger = useMessage();
+
     try {
       const { data, success } = await getUserPreference();
       if (success) {
