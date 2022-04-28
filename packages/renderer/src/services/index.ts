@@ -20,6 +20,7 @@ const urls = {
   regist: '/user/regist',
   getDeviceList: '/device/list',
   getDeviceDetail: '/device',
+  updateDevice: '/device/update',
   unbindDevice: '/device/unbind',
   bindDevice: '/device/bindDevice',
   uploadFile: '/upload',
@@ -78,6 +79,16 @@ export const getDeviceDetail = async (
 ): Promise<CommonResponse<DeviceDetailRes>> => {
   return request(`${urls.getDeviceDetail}/${params.deviceId}`, {
     method: 'GET',
+  });
+};
+
+export const updateDevice = async (
+  params: Partial<DeviceDetailRes>
+): Promise<CommonResponse<any>> => {
+  const { id, ...rest } = params;
+  return request(`${urls.updateDevice}/${id}`, {
+    method: 'PUT',
+    data: rest,
   });
 };
 

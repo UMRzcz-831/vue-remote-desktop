@@ -11,12 +11,14 @@ import {
   NButton,
   NPopconfirm,
   useMessage,
+  NInput,
 } from 'naive-ui';
 import { useDeviceStore } from '../../store/device';
 import './index.scss';
 import { detailList } from './config';
 import { isEmpty } from 'lodash';
 import { unbindDevice } from '../../services';
+import { updateDevice } from '../../services/index';
 
 const Devices = defineComponent({
   setup() {
@@ -27,11 +29,14 @@ const Devices = defineComponent({
     const active = ref(0);
     const msger = useMessage();
     const deviceSetup = useDeviceStore();
+
+    const state = ref('view');
     const { getDevices, getDevice } = deviceSetup;
     const { list, detail } = storeToRefs(deviceSetup);
-    const handleSelectDevice = (deviceId: number) => {
-      active.value = deviceId;
-      getDevice(deviceId);
+
+    const handleSelectDevice = async (index: number, deviceId: number) => {
+      active.value = index;
+      await getDevice(deviceId);
     };
 
     const handleUnbind = async () => {
@@ -46,6 +51,26 @@ const Devices = defineComponent({
           active.value = 0;
         }
       } catch (error) {}
+    };
+
+    const handleEdit = () => {
+      state.value = 'edit';
+    };
+
+    const handleSave = async () => {
+      console.log(detail.value);
+      try {
+        const { success, msg } = await updateDevice(detail.value);
+        if (success) {
+          msger.success(msg);
+          await getDevice(detail.value.id as number);
+          state.value = 'view';
+        } else {
+          msger.error(msg);
+        }
+      } catch (error) {
+        throw error;
+      }
     };
 
     return () => (
@@ -65,13 +90,13 @@ const Devices = defineComponent({
             <div class="device-list">
               <NList>
                 {!isEmpty(list.value) &&
-                  list.value.map(({ device, deviceId }) => (
+                  list.value.map(({ device, deviceId }, index) => (
                     <NListItem
                       class={`device-item ${
-                        deviceId === active.value ? 'active' : ''
+                        index === active.value ? 'active' : ''
                       }`}
                       {...({
-                        onClick: () => handleSelectDevice(deviceId),
+                        onClick: () => handleSelectDevice(index, deviceId),
                       } as any)}
                       key={deviceId}
                       v-slots={{
@@ -96,9 +121,16 @@ const Devices = defineComponent({
                 <div class="device-detail-title">设备详情</div>
               </NDivider>
               <div class="btns">
-                <NButton ghost type="info">
-                  修改
-                </NButton>
+                {state.value === 'view' ? (
+                  <NButton ghost type="info" onClick={handleEdit}>
+                    修改
+                  </NButton>
+                ) : (
+                  <NButton type="info" onClick={handleSave}>
+                    保存
+                  </NButton>
+                )}
+
                 <NPopconfirm
                   positiveText="确定"
                   negativeText="取消"
@@ -123,10 +155,20 @@ const Devices = defineComponent({
                 >
                   {detailList.map(({ label, key, editable }) => (
                     <NFormItem label={label}>
-                      <div class="device-detail-item-view">
-                        {detail.value[key as keyof typeof detail.value] ||
-                          'N/A'}
-                      </div>
+                      {state.value === 'edit' && editable ? (
+                        <NInput
+                          class="edit-input"
+                          v-model:value={
+                            detail.value[key as keyof typeof detail.value]
+                          }
+                          placeholder={`请输入${label}`}
+                        ></NInput>
+                      ) : (
+                        <div class="device-detail-item-view">
+                          {detail.value[key as keyof typeof detail.value] ||
+                            'N/A'}
+                        </div>
+                      )}
                     </NFormItem>
                   ))}
                 </NForm>

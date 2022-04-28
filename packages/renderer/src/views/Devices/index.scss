@@ -72,6 +72,9 @@
       }
       .n-form-item .n-form-item-blank {
         justify-content: flex-end;
+        .edit-input{
+          width: 200px;
+        }
         .device-detail-item-view {
           text-align: right;
           padding: 0 10px;
