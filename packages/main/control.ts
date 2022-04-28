@@ -32,3 +32,7 @@ export async function createControlWindow() {
 export const send = (channel: string, ...args: any[]) => {
   controlWin?.webContents.send(channel, ...args);
 };
+
+export const close = () => {
+  controlWin?.close();
+};

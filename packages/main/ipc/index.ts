@@ -1,6 +1,10 @@
 import { ipcMain } from 'electron';
 import { send as sendMainWindow } from '../index';
-import { createControlWindow, send as sendControlWindow } from '../control';
+import {
+  createControlWindow,
+  send as sendControlWindow,
+  close as closeConrtolWindow,
+} from '../control';
 import signal from '../signal';
 
 const handleIPC = () => {
@@ -11,6 +15,12 @@ const handleIPC = () => {
 
   ipcMain.on('control', async (e, remoteCode) => {
     signal.send?.('control', { remote: remoteCode });
+  });
+
+  ipcMain.on('stop-control', async (e) => {
+    signal.send?.('stop-control', null);
+    sendMainWindow('control-state-change', '', 0);
+    closeConrtolWindow();
   });
 
   signal.on('remoteNotFound', (data) => {
@@ -25,6 +35,10 @@ const handleIPC = () => {
 
   signal.on('beControlled', (data) => {
     sendMainWindow('control-state-change', data.remote, 2);
+  });
+
+  signal.on('end-stream', (data) => {
+    sendMainWindow('control-state-change', '', 0);
   });
 
   ipcMain.on('forward', (e, event, data) => {

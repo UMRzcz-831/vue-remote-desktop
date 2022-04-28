@@ -32,6 +32,7 @@ const Home = defineComponent({
     const notify = useNotification();
     const remoteCode = ref('');
     const controlText = ref('未连接');
+    const status = ref<number>(0);
 
     const registLocal = async () => {
       const code = await ipcRenderer.invoke('registLocal');
@@ -41,6 +42,10 @@ const Home = defineComponent({
 
     const handleStartControl = () => {
       ipcRenderer.send('control', remoteCode.value);
+    };
+
+    const handleStopControl = () => {
+      ipcRenderer.send('stop-control');
     };
 
     const handleCodeNotFound = (e: any, data: { remote: number }) => {
@@ -56,8 +61,11 @@ const Home = defineComponent({
         text = `远程控制${name}成功`;
       } else if (type === 2) {
         text = `被${name}远程控制中`;
+      }else{
+        text = `未连接`;
       }
       controlText.value = text;
+      status.value = type;
     };
 
     return () => (
@@ -103,7 +111,13 @@ const Home = defineComponent({
               </NFormItem>
             </NForm>
             <div>{controlText.value}</div>
-            <NButton onClick={handleStartControl}>连接</NButton>
+            {[1, 2].includes(status.value) ? (
+              <NButton type="primary" onClick={handleStopControl}>
+                结束控制
+              </NButton>
+            ) : (
+              <NButton onClick={handleStartControl}>连接</NButton>
+            )}
           </div>
         </div>
       </div>
